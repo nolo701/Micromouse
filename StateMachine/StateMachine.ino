@@ -21,12 +21,28 @@ int EncodeL = 3;
 int DistLEcho = 13;
 
 int DistTrig = 11;
-
 int IRF = 8;//Active Low
 
-//Motor Array
+// Variable Declarations
+int TicksR = 0;
+int TicksL = 0;
+// For Vco (Velocity Coefficient) Vc0/100 will be used to slow down motors. Set this int from 1->100.
+int VcoR = 100;
+int VcoL = 100;
+// Sensor value variables
+float DistL = 0;
+float DistF = 0;
+float DistR = 0;
 
+//Motor Array
+// int motor[] = {MotorCh1, MotorCh2, MotorEN, Ticks,   Vco }
+//                motor[0]  motor[1]  motor[2] motor[3] motor[4]
+
+int RMotor[] = {MotorRCh1, MotorRCh2, MotorREN, TicksR, VcoR};
+int LMotor[] = {MotorLCh1, MotorLCh2, MotorLEN, TicksL, VcoL};
 //Sensor Array
+int sensor[] = {DistLEcho, IRF, DistREcho};
+float sensorVal[] = {DistL, DistF, DistR};
 
 enum cardDir {NORTH, EAST, SOUTH, WEST};
 enum cardDir Facing;
@@ -64,7 +80,7 @@ void setup() {
   pinMode(IRF,INPUT);
   
   // Read sensors to determine which direction is being faced
-  checkStart(
+//  checkStart()
   // Update the maze array
 
   // Face valid direction
@@ -75,13 +91,10 @@ void setup() {
 }
 
 void loop() {
-  // Check encoder positions to update the current location in maze array
-  //moveMotor(2,'f',50);
-  // Check that the robot is centered
-
-  // Check if there is a junction (split in path)
-  
-  // Check that the path is still valid
+  //Check encoders to see if enterned next space
+  bool flag;
+  flag = StandardizeEncoders(LMotor,RMotor);
+  //Update Sensors
 
   // 
   
