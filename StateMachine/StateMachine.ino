@@ -6,22 +6,22 @@
  */
 
 
-#include "FunctionLibrary/FunctionLibrary.h"
+
 // Pin declaration
-int MotorRCh1 = 5;
-int MotorRCh2 = 6;
-int MotorREN = 4;
-int EncodeR = 2;
-int DistREcho = 12;
+static int MotorRCh1 = 5;
+static int MotorRCh2 = 6;
+static int MotorREN = 4;
+static int EncodeR = 2;
+static int DistREcho = 12;
 
-int MotorLCh1 = 9;
-int MotorLCh2 = 10;
-int MotorLEN = 7;
-int EncodeL = 3;
-int DistLEcho = 13;
+static int MotorLCh1 = 9;
+static int MotorLCh2 = 10;
+static int MotorLEN = 7;
+static int EncodeL = 3;
+static int DistLEcho = 13;
 
-int DistTrig = 11;
-int IRF = 8;//Active Low
+static int DistTrig = 11;
+static int IRF = 8;//Active Low
 
 // Variable Declarations
 int TicksR = 0;
@@ -50,9 +50,15 @@ enum cardDir Facing;
 // Maze instantiation
 int maze[16][16];
 
+#include "FunctionLibrary/FunctionLibrary.h"
 
+//Setup Sensors
+NewPing UltrasonicLeft(DistTrig, DistLEcho, 30);
+NewPing UltrasonicRight(DistTrig, DistREcho, 30);
 
-
+// Position Array
+int xPos = 0;
+int yPos = 0;
 void setup() {
   // Set the maze to all zeros
   int j;
@@ -78,13 +84,17 @@ void setup() {
 
   pinMode(DistTrig, OUTPUT);
   pinMode(IRF,INPUT);
+
   
   // Read sensors to determine which direction is being faced
 //  checkStart()
   // Update the maze array
-
+  xPos = 0;
+  yPos = 0;
+  Facing = SOUTH;
+  maze[xPos][yPos] = CheckSensors(sensorVal, Facing, UltrasonicLeft, UltrasonicRight);
   // Face valid direction
-
+  
   // Start move
 
   // Enter loop
@@ -92,11 +102,10 @@ void setup() {
 
 void loop() {
   //Check encoders to see if enterned next space
-  bool flag;
-  flag = StandardizeEncoders(LMotor,RMotor);
-  //Update Sensors
+  if(StandardizeEncoders(LMotor,RMotor)){
+     maze[xPos][yPos] = CheckSensors(sensorVal, Facing, UltrasonicLeft, UltrasonicRight);
+     switch Facing
+     case: 
+  }
 
-  // 
-  
-  
 }
