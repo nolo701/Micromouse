@@ -99,7 +99,20 @@ void setup() {
   // Face valid direction
   
   // Start move
-
+if( (maze[xPos][yPos] & (0x08>>Facing)) > 0 ){
+       moveForward(100, LMotor, RMotor);
+     }
+     else if( (maze[xPos][yPos] & (0x44>>Facing)) > 0 ){
+       turnRight(100, 50, LMotor, RMotor);
+     }
+     else if( (maze[xPos][yPos] & (0x11>>Facing)) > 0 ){
+       turnLeft(100, 50, LMotor, RMotor);
+     }
+     else if( (maze[xPos][yPos] & (0x22>>Facing)) > 0 ){
+       turnRight(100, 50, LMotor, RMotor);
+       turnRight(100, 50, LMotor, RMotor);
+       moveForward(100, LMotor, RMotor);
+     }
   // Enter loop
 }
 
@@ -107,23 +120,28 @@ void loop() {
   //Check encoders to see if enterned next space
   if(StandardizeEncoders(LMotor,RMotor)){
      stopMotors(LMotor,RMotor);
+     delay(1000);
      maze[xPos][yPos] = CheckSensors(sensorVal, Facing, UltrasonicLeft, UltrasonicRight);
      if( (maze[xPos][yPos] & (0x08>>Facing)) > 0 ){
-       moveForward(50, LMotor, RMotor);
+       moveForward(100, LMotor, RMotor);
      }
      else if( (maze[xPos][yPos] & (0x44>>Facing)) > 0 ){
-       turnRight(50, 50, LMotor, RMotor);
+       turnRight(100, 50, LMotor, RMotor);
      }
      else if( (maze[xPos][yPos] & (0x11>>Facing)) > 0 ){
-       turnLeft(50, 50, LMotor, RMotor);
+       turnLeft(100, 50, LMotor, RMotor);
      }
      else if( (maze[xPos][yPos] & (0x22>>Facing)) > 0 ){
-       turnRight(50, 50, LMotor, RMotor);
-       turnRight(50, 50, LMotor, RMotor);
-       moveForward(50, LMotor, RMotor);
-     }
-
-     
+       turnRight(100, 50, LMotor, RMotor);
+       turnRight(100, 50, LMotor, RMotor);
+       moveForward(100, LMotor, RMotor);
+     }  
+  }
+  if( digitalRead(IRF) == 0 ){
+    stopMotors(LMotor,RMotor);
+  }
+  else{
+    moveForward(100, LMotor, RMotor);
   }
 
 }
