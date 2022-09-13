@@ -12,10 +12,10 @@ void moveMotor(int motor[], char dir, int duty){
     //This will turn on the corresponding motor depending on direction
     analogWrite(motor[0],(numDir=='f')*bitDuty);
     analogWrite(motor[1],(numDir=='r')*bitDuty);
-    Serial.println(numDir);
+   /* Serial.println(numDir);
     Serial.println(bitDuty);
     Serial.println((numDir=='f'));
-    Serial.println((numDir=='f')*bitDuty);
+    Serial.println((numDir=='f')*bitDuty);*/
 
 }
 
@@ -31,14 +31,20 @@ void moveForward(int duty, int motorL[],int motorR[]){
 }
 
 void turnLeft(int duty,int diff, int motorL[],int motorR[]){  //diff should be <1 and determines the ratio of motor speeds
-			moveMotor(motorL,'f',diff*duty);
+			moveMotor(motorL,'f',(diff/100)*duty);
 			moveMotor(motorR,'f',duty);
 			return;
 }
 
 void turnRight(int duty,int diff, int motorL[],int motorR[]){  //diff should be <1 and determines the ratio of motor speeds
 			moveMotor(motorL,'f',duty);
-			moveMotor(motorR,'f',diff*duty);
+			moveMotor(motorR,'f',(diff/100)*duty);
+			return;
+}
+
+void turnAround(int duty, int motorL[], int motorR[]){
+			moveMotor(motorL,'r',duty);
+			moveMotor(motorR,'f',duty);
 			return;
 }
 
