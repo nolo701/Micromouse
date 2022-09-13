@@ -59,6 +59,7 @@ NewPing UltrasonicRight(DistTrig, DistREcho, 30);
 // Position Array
 int xPos = 0;
 int yPos = 0;
+
 void setup() {
   // Set the maze to all zeros
   int j;
@@ -87,12 +88,14 @@ void setup() {
 
   
   // Read sensors to determine which direction is being faced
-//  checkStart()
+  //  checkStart()
   // Update the maze array
   xPos = 0;
   yPos = 0;
   Facing = SOUTH;
   maze[xPos][yPos] = CheckSensors(sensorVal, Facing, UltrasonicLeft, UltrasonicRight);
+  // Error correct the starting space
+  maze[xPos][yPos] = maze[xPos][yPos] & 0x77;
   // Face valid direction
   
   // Start move
@@ -103,9 +106,23 @@ void setup() {
 void loop() {
   //Check encoders to see if enterned next space
   if(StandardizeEncoders(LMotor,RMotor)){
+     stopMotors(LMotor,RMotor);
      maze[xPos][yPos] = CheckSensors(sensorVal, Facing, UltrasonicLeft, UltrasonicRight);
-     switch Facing
-     case: 
+     if( (maze[xPos][yPos] & (0x08>>Facing)) > 0 ){
+       moveForward(50, LMotor, RMotor);
+     }
+     else if( (maze[xPos][yPos] & (0x44>>Facing)) > 0 ){
+       turnRight(50, 50, LMotor, RMotor);
+     }
+     else if( (maze[xPos][yPos] & (0x11>>Facing)) > 0 ){
+       turnLeft(50, 50, LMotor, RMotor);
+     }
+     else if( (maze[xPos][yPos] & (0x22>>Facing)) > 0 ){
+       turnRight(50, 50, LMotor, RMotor);
+       turnRight(50, 50, LMotor, RMotor);
+       moveForward(50, LMotor, RMotor);
+       
+     }
   }
 
 }
