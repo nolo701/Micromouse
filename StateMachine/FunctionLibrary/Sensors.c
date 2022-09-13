@@ -7,7 +7,6 @@ int Square = 18*40;
 
 bool StandardizeEncoders(int LMotor[], int RMotor[]){
     bool output = false;
-    if (abs(LMotor[4]-RMotor[4]) < encoderTol){
     if ( abs(LMotor[4]-RMotor[4]) < encoderTol){
         if(LMotor[4]/Square > 1){
             LMotor[4] = LMotor[4] - Square;
@@ -53,4 +52,3 @@ int CheckSensors(float sensorVal[], int Facing, NewPing L, NewPing R){
     return int(stateMask & mask);
 
 }
-    else return false;

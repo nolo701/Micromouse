@@ -18,10 +18,6 @@
 #include "Sensors.h"
 #endif
 
-#ifndef PINDECLARATIONS_H
-#include "PinDeclarations.h"
-#endif
-
 #ifndef STDLIB_H
 #include <stdlib.h>
 #endif
