@@ -1,12 +1,11 @@
 
 // A motor should look like:
 
-// int motor[] = {MotorCh1, MotorCh2, MotorEN, Ticks,   Vco }
-//                motor[0]  motor[1]  motor[2] motor[3] motor[4]
+// int motor[] = {MotorCh1, MotorCh2, Ticks,   Vco }
+//                motor[0]  motor[1]  motor[2] motor[3]
 
 
 void moveMotor(int motor[], char dir, int duty){
-    digitalWrite(motor[2],HIGH);
     int numDir = dir;   
     int bitDuty = 255*duty/100;
     //This will turn on the corresponding motor depending on direction
@@ -20,8 +19,10 @@ void moveMotor(int motor[], char dir, int duty){
 }
 
 void stopMotors(int motorL[], int motorR[]){
-    digitalWrite(motorL[2],LOW);
-    digitalWrite(motorR[2],LOW);
+    analogWrite(motorL[0],0);
+    analogWrite(motorR[0],0);
+    analogWrite(motorL[1],0);
+    analogWrite(motorR[1],0);
 }
 
 void moveForward(int duty, int motorL[],int motorR[]){  

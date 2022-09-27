@@ -10,96 +10,89 @@
 // Pin declaration
 static int MotorRCh1 = 5;
 static int MotorRCh2 = 6;
-static int MotorREN = 4;
 static int EncodeR = 2;
-static int DistREcho = 12;
+static int DistREcho = 12; // Distance Sensor
 
 static int MotorLCh1 = 9;
 static int MotorLCh2 = 10;
-static int MotorLEN = 7;
 static int EncodeL = 3;
-static int DistLEcho = 13;
+static int DistLEcho = 13; // Distance Sensor
 
-static int DistTrig = 11;
-static int IRF = 8;//Active Low
+static int DistTrig = 4;
+static int DistFEcho = 8; // Distance Sensor
 
 // Variable Declarations
+
+// Keep track of the number of ticks on each wheel
 int TicksR = 0;
 int TicksL = 0;
+
 // For Vco (Velocity Coefficient) Vc0/100 will be used to slow down motors. Set this int from 1->100.
 int VcoR = 100;
 int VcoL = 100;
+
 // Sensor value variables
 float DistL = 0;
 float DistF = 0;
 float DistR = 0;
 
 //Motor Array
-// int motor[] = {MotorCh1, MotorCh2, MotorEN, Ticks,   Vco }
-//                motor[0]  motor[1]  motor[2] motor[3] motor[4]
+// int motor[] = {MotorCh1, MotorCh2, Ticks,   Vco }
+//                motor[0]  motor[1]  motor[2] motor[3]
 
-int RMotor[] = {MotorRCh1, MotorRCh2, MotorREN, TicksR, VcoR};
-int LMotor[] = {MotorLCh1, MotorLCh2, MotorLEN, TicksL, VcoL};
+int RMotor[] = {MotorRCh1, MotorRCh2, TicksR, VcoR};
+int LMotor[] = {MotorLCh1, MotorLCh2, TicksL, VcoL};
 //Sensor Array
-int sensor[] = {DistLEcho, IRF, DistREcho};
-float sensorVal[] = {DistL, DistF, DistR};
-
-enum cardDir {NORTH, EAST, SOUTH, WEST};
-enum cardDir Facing;
-
-// Maze instantiation
-int maze[16][16];
+int sensors[] = {DistLEcho, DistFEcho, DistREcho};
+float sensorVals[] = {DistL, DistF, DistR};
 
 #include "FunctionLibrary/FunctionLibrary.h"
+// Create Maze
+Maze M(16,16);
+
 
 //Setup Sensors
 NewPing UltrasonicLeft(DistTrig, DistLEcho, 30);
+NewPing UltrasonicForward(DistTrig, DistFEcho, 30);
 NewPing UltrasonicRight(DistTrig, DistREcho, 30);
 
 // Position Array
-int xPos = 0;
-int yPos = 0;
+Position currentPos(0,0); // Update as current position
 
-void setup() {
-  // Set the maze to all zeros
-  int j;
-  int i;
-  for (i=0;i<16;i++){
-    for (j=0;j<16;j++){
-      maze[i][j]=0;
-    }
-  }
+
+void setup(){
+  M.instantMaze();
   
   // Do all the hardware setup here
   pinMode(MotorRCh1,OUTPUT);
   pinMode(MotorRCh2,OUTPUT);
-  pinMode(MotorREN,OUTPUT);
   pinMode(EncodeR,INPUT);
   pinMode(DistREcho, INPUT);
   
   pinMode(MotorLCh1,OUTPUT);
   pinMode(MotorLCh2,OUTPUT);
-  pinMode(MotorLEN,OUTPUT);
   pinMode(EncodeL,INPUT);
   pinMode(DistLEcho, INPUT);
 
   pinMode(DistTrig, OUTPUT);
-  pinMode(IRF,INPUT);
+  pinMode(DistFEcho,INPUT);
 
   
   // Read sensors to determine which direction is being faced
   //  checkStart()
   // Update the maze array
-  xPos = 0;
-  yPos = 0;
+  // Set position to 0,0 & direction to south
   Facing = SOUTH;
-  maze[xPos][yPos] = CheckSensors(sensorVal, Facing, UltrasonicLeft, UltrasonicRight);
+
+  // Update the starting square value
+  M.setValue(currentPos, checkSensors(sensorVals, Facing, UltrasonicLeft, UltrasonicForward, UltrasonicRight)); 
   // Error correct the starting space
-  maze[xPos][yPos] = maze[xPos][yPos] & 0x77;
+  M.setValue(currentPos, M.getValue(currentPos) & 0x77);
+  
   // Face valid direction
   
   // Start move
-if( (maze[xPos][yPos] & (0x08>>Facing)) > 0 ){
+/*if( (maze[xPos][yPos] & (0x08>>Facing)) > 0 ){
        moveForward(100, LMotor, RMotor);
      }
      else if( (maze[xPos][yPos] & (0x44>>Facing)) > 0 ){
@@ -114,34 +107,15 @@ if( (maze[xPos][yPos] & (0x08>>Facing)) > 0 ){
        moveForward(100, LMotor, RMotor);
      }
   // Enter loop
+  */
 }
 
 void loop() {
   //Check encoders to see if enterned next space
-  if(StandardizeEncoders(LMotor,RMotor)){
+  if(standardizeEncoders(LMotor,RMotor)){
      stopMotors(LMotor,RMotor);
      delay(1000);
-     maze[xPos][yPos] = CheckSensors(sensorVal, Facing, UltrasonicLeft, UltrasonicRight);
-     if( (maze[xPos][yPos] & (0x08>>Facing)) > 0 ){
-       moveForward(100, LMotor, RMotor);
-     }
-     else if( (maze[xPos][yPos] & (0x44>>Facing)) > 0 ){
-       turnRight(100, 50, LMotor, RMotor);
-     }
-     else if( (maze[xPos][yPos] & (0x11>>Facing)) > 0 ){
-       turnLeft(100, 50, LMotor, RMotor);
-     }
-     else if( (maze[xPos][yPos] & (0x22>>Facing)) > 0 ){
-       turnRight(100, 50, LMotor, RMotor);
-       turnRight(100, 50, LMotor, RMotor);
-       moveForward(100, LMotor, RMotor);
-     }  
+     //maze[xPos][yPos] = CheckSensors(sensorVal, Facing, UltrasonicLeft, UltrasonicRight);
+     
   }
-  if( digitalRead(IRF) == 0 ){
-    stopMotors(LMotor,RMotor);
-  }
-  else{
-    moveForward(100, LMotor, RMotor);
-  }
-
 }

@@ -1,0 +1,7 @@
+#ifndef SENSORS_C_THINKING_H
+#define SENSORS_C_THINKING_H
+
+
+
+
+#endif //SENSORS_C_THINKING_H

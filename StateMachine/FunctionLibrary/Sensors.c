@@ -5,7 +5,7 @@ int encoderTol = 4;
 int Square = 18*40;
 
 
-bool StandardizeEncoders(int LMotor[], int RMotor[]){
+bool standardizeEncoders(int LMotor[], int RMotor[]){
     bool output = false;
     if ( abs(LMotor[4]-RMotor[4]) < encoderTol){
         if(LMotor[4]/Square > 1){
@@ -18,14 +18,14 @@ bool StandardizeEncoders(int LMotor[], int RMotor[]){
     return output;
 }
 
-int CheckSensors(float sensorVal[], int Facing, NewPing L, NewPing R){
+int checkSensors(float sensorVal[], int Facing, NewPing L, NewPing F, NewPing R){
     char mask = 0x0F;
 
     int wallThreshold = 10;
 
     //Read all the sensors, must declare the ultrasonics first
     sensorVal[0] = int(L.ping_cm());
-    sensorVal[1] = !digitalRead(IRF);
+    sensorVal[1] = int(F.ping_cm());
     sensorVal[2] = int(R.ping_cm());
 
     // Make Binary mask where F = Facing, R = Right, B = Behind, L = Left

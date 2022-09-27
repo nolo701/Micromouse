@@ -4,10 +4,6 @@
 //#ifndef "Motor.h"
 #ifndef MOTOR_H
 #include "Motor.h"
-//#endif
-//#ifndef "NewPing.h"
-#include "NewPing.h"
-//#endif
 #endif
 
 #ifndef NEWPING_CPP
@@ -18,10 +14,18 @@
 #include "Sensors.h"
 #endif
 
+#ifndef THINKING_H
+#include "Thinking.h"
+#endif
+
+#ifndef MAZE_H
+#include "Maze.h"
+#endif
+
 #ifndef STDLIB_H
 #include <stdlib.h>
 #endif
 
-#ifndef STDLIB_H
+#ifndef STDBOOL_H
 #include <stdbool.h>
 #endif
