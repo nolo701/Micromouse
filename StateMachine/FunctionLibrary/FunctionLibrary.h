@@ -22,6 +22,10 @@
 #include "Maze.h"
 #endif
 
+#ifndef DRIVE2GOAL_H
+#include "Drive2Goal.h"
+#endif
+
 #ifndef STDLIB_H
 #include <stdlib.h>
 #endif
