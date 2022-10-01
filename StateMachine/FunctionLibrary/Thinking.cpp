@@ -3,9 +3,7 @@
  */
 
 
-#ifndef FUNCTIONLIBRARY_H
-#include "FunctionLibrary.h"
-#endif
+  int cmPerSquare = 18;
 
 class Think {
 public:
@@ -20,9 +18,6 @@ public:
  * - During the comparison logic, check that the goal square is unvisited (it will have value 0 in maze[][])
  *
  */
-
-int cmPerSquare = 18;
-
     Position findGoal(Position currentP, Maze M){
         int dummy = checkSensors(sensorVals, Facing, UltrasonicLeft, UltrasonicForward, UltrasonicRight);
         int[3] distUnits = {int(sensorVals[0])/cmPerSquare, int(sensorVals[1])/cmPerSquare, int(sensorVals[2])/cmPerSquare};

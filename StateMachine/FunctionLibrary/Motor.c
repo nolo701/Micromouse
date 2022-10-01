@@ -25,7 +25,7 @@ void stopMotors(int motorL[], int motorR[]){
     analogWrite(motorR[0],0);
     analogWrite(motorL[1],0);
     analogWrite(motorR[1],0);
-	motor[4] = 0;
+	motorL[4] = 0;
 }
 
 void moveForward(int duty, int motorL[],int motorR[]){  

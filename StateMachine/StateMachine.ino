@@ -41,10 +41,14 @@ int LMotor[] = {MotorLCh1, MotorLCh2, TicksL, VcoL, Moving};
 int sensors[] = {DistLEcho, DistFEcho, DistREcho};
 float sensorVals[] = {DistL, DistF, DistR};
 
+
 #include "FunctionLibrary/FunctionLibrary.h"
 // Create Maze
 Maze M(16, 16);
 
+// CPP 
+Position findGoal(Position , Maze);
+void Drive2Goal(Position, Position);
 
 
 //Setup Sensors
@@ -86,8 +90,7 @@ void setup() {
   // Check sensor for a goal
   goal = findGoal(currentPos, M);
   // Add the goal to the stack
-
-  //Drive2Goal(currentPos, goal);
+  Drive2Goal(currentPos, goal);
 
 }
 

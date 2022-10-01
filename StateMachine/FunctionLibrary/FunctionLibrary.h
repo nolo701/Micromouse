@@ -2,12 +2,18 @@
 //    #define <Arduino.h>
 //#endif
 //#ifndef "Motor.h"
+
+
+#ifndef NEWPING_CPP
+#include "NewPing.cpp"
+#endif
+
 #ifndef MOTOR_H
 #include "Motor.h"
 #endif
 
-#ifndef NEWPING_CPP
-#include "NewPing.cpp"
+#ifndef MAZE_H
+#include "Maze.h"
 #endif
 
 #ifndef SENSORS_H
@@ -16,10 +22,6 @@
 
 #ifndef THINKING_H
 #include "Thinking.h"
-#endif
-
-#ifndef MAZE_H
-#include "Maze.h"
 #endif
 
 #ifndef DRIVE2GOAL_H
