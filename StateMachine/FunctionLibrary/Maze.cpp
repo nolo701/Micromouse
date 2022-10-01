@@ -39,11 +39,11 @@ public:
         }
 
     }
-    Position(Position p){
-        x = p.getX();
-        y = p.getY();
-        quad = p.getQuad;
-        distanceEnd = p.getDistEnd;
+    Position(const Position&){
+        x = getX();
+        y = getY();
+        quad = getQuad();
+        distanceEnd = getDistEnd();
     }
 
     float distanceBetween(Position destination){
@@ -63,7 +63,7 @@ public:
     }
 
     float getDistEnd(){
-        return distanceEnd
+        return distanceEnd;
     }
     void setX(int inputX){
         x = inputX;

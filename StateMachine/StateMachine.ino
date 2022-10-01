@@ -7,34 +7,28 @@
 
 
 
-// Pin declaration
-static int MotorRCh1 = 5;
-static int MotorRCh2 = 6;
+// Pin declarations
+static int MotorRCh1 = 6;
+static int MotorRCh2 = 5;
 static int EncodeR = 2;
-static int DistREcho = 12; // Distance Sensor
-
 static int MotorLCh1 = 9;
 static int MotorLCh2 = 10;
 static int EncodeL = 3;
 static int DistLEcho = 13; // Distance Sensor
-
-static int DistTrig = 4;
 static int DistFEcho = 8; // Distance Sensor
+static int DistREcho = 12; // Distance Sensor
+static int DistLTrig = A2;
+static int DistFTrig = A4;
+static int DistRTrig = A3;
 
 // Variable Declarations
-
-// Keep track of the number of ticks on each wheel
-int TicksR = 0;
-int TicksL = 0;
-
-// For Vco (Velocity Coefficient) Vc0/100 will be used to slow down motors. Set this int from 1->100.
-int VcoR = 100;
-int VcoL = 100;
-
-// Sensor value variables
-float DistL = 0;
-float DistF = 0;
-float DistR = 0;
+int TicksR = 0; // Keep track of the number of ticks on each wheel
+int TicksL = 0; // Keep track of the number of ticks on each wheel
+int VcoR = 100; // For Vco (Velocity Coefficient) Vc0/100 will be used to slow down motors. Set this int from 1->100.
+int VcoL = 100; // For Vco (Velocity Coefficient) Vc0/100 will be used to slow down motors. Set this int from 1->100.
+float DistL = 0; // Sensor value variables
+float DistF = 0; // Sensor value variables
+float DistR = 0; // Sensor value variables
 
 //Motor Array
 // int motor[] = {MotorCh1, MotorCh2, Ticks,   Vco }
@@ -52,9 +46,9 @@ Maze M(16,16);
 
 
 //Setup Sensors
-NewPing UltrasonicLeft(DistTrig, DistLEcho, 30);
-NewPing UltrasonicForward(DistTrig, DistFEcho, 30);
-NewPing UltrasonicRight(DistTrig, DistREcho, 30);
+NewPing UltrasonicLeft(DistLTrig, DistLEcho, 100);
+NewPing UltrasonicForward(DistFTrig, DistFEcho, 100);
+NewPing UltrasonicRight(DistRTrig, DistREcho, 100);
 
 // Position Array
 Position currentPos(0,0); // Update as current position
@@ -67,15 +61,15 @@ void setup(){
   pinMode(MotorRCh1,OUTPUT);
   pinMode(MotorRCh2,OUTPUT);
   pinMode(EncodeR,INPUT);
-  pinMode(DistREcho, INPUT);
-  
   pinMode(MotorLCh1,OUTPUT);
   pinMode(MotorLCh2,OUTPUT);
   pinMode(EncodeL,INPUT);
-  pinMode(DistLEcho, INPUT);
-
-  pinMode(DistTrig, OUTPUT);
+  pinMode(DistLEcho,INPUT);
+  pinMode(DistLTrig,OUTPUT);
   pinMode(DistFEcho,INPUT);
+  pinMode(DistFTrig,OUTPUT);
+  pinMode(DistREcho,INPUT);
+  pinMode(DistRTrig,OUTPUT);
 
   
   // Read sensors to determine which direction is being faced
@@ -92,22 +86,7 @@ void setup(){
   // Face valid direction
   
   // Start move
-/*if( (maze[xPos][yPos] & (0x08>>Facing)) > 0 ){
-       moveForward(100, LMotor, RMotor);
-     }
-     else if( (maze[xPos][yPos] & (0x44>>Facing)) > 0 ){
-       turnRight(100, 50, LMotor, RMotor);
-     }
-     else if( (maze[xPos][yPos] & (0x11>>Facing)) > 0 ){
-       turnLeft(100, 50, LMotor, RMotor);
-     }
-     else if( (maze[xPos][yPos] & (0x22>>Facing)) > 0 ){
-       turnRight(100, 50, LMotor, RMotor);
-       turnRight(100, 50, LMotor, RMotor);
-       moveForward(100, LMotor, RMotor);
-     }
-  // Enter loop
-  */
+
 }
 
 void loop() {
