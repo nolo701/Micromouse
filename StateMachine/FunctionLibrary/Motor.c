@@ -31,15 +31,15 @@ void moveForward(int duty, int motorL[],int motorR[]){
 	return;
 }
 
-void turnLeft(int duty,int diff, int motorL[],int motorR[]){  //diff should be <1 and determines the ratio of motor speeds
-			moveMotor(motorL,'f',(diff/100)*duty);
+void turnLeft(int duty, int motorL[],int motorR[]){  //diff should be <1 and determines the ratio of motor speeds
+			moveMotor(motorL,'r',duty);
 			moveMotor(motorR,'f',duty);
 			return;
 }
 
-void turnRight(int duty,int diff, int motorL[],int motorR[]){  //diff should be <1 and determines the ratio of motor speeds
+void turnRight(int duty, int motorL[],int motorR[]){  //diff should be <1 and determines the ratio of motor speeds
 			moveMotor(motorL,'f',duty);
-			moveMotor(motorR,'f',(diff/100)*duty);
+			moveMotor(motorR,'r',duty);
 			return;
 }
 
