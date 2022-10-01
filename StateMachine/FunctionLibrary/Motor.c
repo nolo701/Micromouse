@@ -11,6 +11,8 @@ void moveMotor(int motor[], char dir, int duty){
     //This will turn on the corresponding motor depending on direction
     analogWrite(motor[0],(numDir=='f')*bitDuty);
     analogWrite(motor[1],(numDir=='r')*bitDuty);
+	motor[4] = 1;
+	
    /* Serial.println(numDir);
     Serial.println(bitDuty);
     Serial.println((numDir=='f'));
@@ -23,6 +25,7 @@ void stopMotors(int motorL[], int motorR[]){
     analogWrite(motorR[0],0);
     analogWrite(motorL[1],0);
     analogWrite(motorR[1],0);
+	motor[4] = 0;
 }
 
 void moveForward(int duty, int motorL[],int motorR[]){  
