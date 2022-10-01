@@ -39,11 +39,13 @@ public:
         }
 
     }
-    Position(const Position&){
-        x = getX();
-        y = getY();
-        quad = getQuad();
-        distanceEnd = getDistEnd();
+    
+
+    Position(const Position &p){
+        x = p.x;
+        y = p.y;
+        quad = p.quad;  
+        distanceEnd = p.distanceEnd;
     }
 
     float distanceBetween(Position destination){

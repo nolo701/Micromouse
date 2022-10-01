@@ -2,7 +2,13 @@
 //    #define <Arduino.h>
 //#endif
 //#ifndef "Motor.h"
+#ifndef STDLIB_H
+#include <stdlib.h>
+#endif
 
+#ifndef STDBOOL_H
+#include <stdbool.h>
+#endif
 
 #ifndef NEWPING_CPP
 #include "NewPing.cpp"
@@ -28,10 +34,3 @@
 #include "Drive2Goal.h"
 #endif
 
-#ifndef STDLIB_H
-#include <stdlib.h>
-#endif
-
-#ifndef STDBOOL_H
-#include <stdbool.h>
-#endif

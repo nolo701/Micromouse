@@ -3,7 +3,8 @@
  */
 
 
-  int cmPerSquare = 18;
+short cmPerSquare = 18;
+
 
 class Think {
 public:
@@ -18,17 +19,23 @@ public:
  * - During the comparison logic, check that the goal square is unvisited (it will have value 0 in maze[][])
  *
  */
-    Position findGoal(Position currentP, Maze M){
-        int dummy = checkSensors(sensorVals, Facing, UltrasonicLeft, UltrasonicForward, UltrasonicRight);
-        int[3] distUnits = {int(sensorVals[0])/cmPerSquare, int(sensorVals[1])/cmPerSquare, int(sensorVals[2])/cmPerSquare};
+    Position findGoal(Position currentP, Maze M, NewPing USensors[]){
+        int dummy = checkSensors(sensorVals, Facing, USensors[0], USensors[1], USensors[2]);
+        int distUnits[3] = {int(sensorVals[0])/cmPerSquare, int(sensorVals[1])/cmPerSquare, int(sensorVals[2])/cmPerSquare};
 
         // create Output Goal
         Position G(currentP);
 
         // Define relatives from absolute
-        int[3] D = {(Facing + 3)%4, Facing, (Facing + 5)%4};
-        Position[3] TestPs = {Position L(currentP), Position F(currentP), Position R(currentP)};
-        for (int i=0, i<3, i++){
+        int D[3];
+        D[0] = (Facing + 3)%4;
+        D[1] = Facing;
+        D[2] = (Facing + 5)%4;
+        Position TestPs[3] = {};
+        TestPs[0] = Position L(currentP);
+        TestPs[1] = Position F(currentP);
+        TestPs[2] = Position R(currentP);
+        for (int i=0; i<3; i++){
             if(D[i] & 0x01){
                 TestPs[i].setX(TestPs[i].getX() + (2-D[i])*distUnits[i]);
                 TestPs[i].updatePos();
@@ -49,11 +56,13 @@ public:
                     G.updatePos();
                 }
             }
-        }
+        };
 
         return G;
-
     }
+};
+
+
 
 
 
@@ -73,4 +82,3 @@ public:
  *
  */
 
-};//End Think

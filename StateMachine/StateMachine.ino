@@ -47,7 +47,7 @@ float sensorVals[] = {DistL, DistF, DistR};
 Maze M(16, 16);
 
 // CPP 
-Position findGoal(Position , Maze);
+Position findGoal(Position , Maze, NewPing USensors[]);
 void Drive2Goal(Position, Position);
 
 
@@ -55,6 +55,9 @@ void Drive2Goal(Position, Position);
 NewPing UltrasonicLeft(DistLTrig, DistLEcho, 100);
 NewPing UltrasonicForward(DistFTrig, DistFEcho, 100);
 NewPing UltrasonicRight(DistRTrig, DistREcho, 100);
+
+NewPing USensors[] = {UltrasonicLeft, UltrasonicForward, UltrasonicRight};
+
 
 // Position Array
 Position currentPos(0, 0); // Update as current position
@@ -88,7 +91,7 @@ void setup() {
   // Error correct the starting space
   M.setValue(currentPos, M.getValue(currentPos) & 0x77);
   // Check sensor for a goal
-  goal = findGoal(currentPos, M);
+  goal = findGoal(currentPos, M, USensors);
   // Add the goal to the stack
   Drive2Goal(currentPos, goal);
 
@@ -96,8 +99,16 @@ void setup() {
 
 void loop() {
   //Check encoders to see if enterned next space
-  if (standardizeEncoders(LMotor, RMotor)) {
+
+  moveForward(100,  LMotor,RMotor);
+  Serial.println(UltrasonicLeft.ping_cm());
+
+  Serial.println(UltrasonicRight.ping_cm());
+
+  delay(500);
+  updateMotorSpeeds( RMotor,  LMotor, UltrasonicLeft, UltrasonicRight);
+//  if (standardizeEncoders(LMotor, RMotor)) {
     // Check a goal
 
-  }
+//  }
 }
