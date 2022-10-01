@@ -43,9 +43,15 @@ void turnRight(int duty, int motorL[],int motorR[]){  //diff should be <1 and de
 			return;
 }
 
-void turnAround(int duty, int motorL[], int motorR[]){
-			moveMotor(motorL,'r',duty);
+void diffLeft(int duty,int diff, int motorL[], int motorR[]){
+			moveMotor(motorL,'f',1/diff*duty);
 			moveMotor(motorR,'f',duty);
+			return;
+}
+
+void diffRight(int duty,int diff, int motorL[], int motorR[]){
+			moveMotor(motorL,'f',duty);
+			moveMotor(motorR,'f',1/diff*duty);
 			return;
 }
 
