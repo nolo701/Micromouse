@@ -2,7 +2,6 @@
  * This is the file where the functions to make decisions and do the logic for solving the maze is.
  */
 
-#include "Thinking.h"
 
 #ifndef FUNCTIONLIBRARY_H
 #include "FunctionLibrary.h"

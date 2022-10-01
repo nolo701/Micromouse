@@ -87,7 +87,7 @@ void setup() {
   goal = findGoal(currentPos, M);
   // Add the goal to the stack
 
-  Drive2Goal(currentPos, goal);
+  //Drive2Goal(currentPos, goal);
 
 }
 
