@@ -1,3 +1,4 @@
+@@ -1,54 +0,0 @@
 # Prerequisites
 *.d
 
@@ -50,5 +51,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
 # Noah Added ignores
 .idea/
