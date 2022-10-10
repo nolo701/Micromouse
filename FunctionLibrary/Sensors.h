@@ -2,7 +2,9 @@
 #include "FunctionLibrary.h"
 #endif
 
-#include "Sensors.c"
+#ifndef SENSORS_C
+#include "Sensors.cpp"
+#endif
 
 bool standardizeEncoders(int[], int[]);
 int checkSensors(float [], int , NewPing , NewPing, NewPing);
