@@ -3,9 +3,6 @@
 
 // int motor[] = {MotorCh1, MotorCh2, Ticks,   Vco }
 //                motor[0]  motor[1]  motor[2] motor[3]
-#ifndef NEWPING_CPP
-#include "NewPing.cpp"
-#endif
 
 void moveMotor(int motor[], char dir, int duty){
     int numDir = dir;   

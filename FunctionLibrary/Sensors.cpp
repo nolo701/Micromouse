@@ -1,3 +1,7 @@
+#ifndef NEWPING_CPP
+#include "NewPing.cpp"
+#endif
+
 
 #include <stdlib.h>
 int wheelDiam = 5;//cm
