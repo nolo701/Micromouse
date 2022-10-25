@@ -1,2 +1,0 @@
-C:\PROGRA~2\Arduino\hardware\tools\avr\bin\avr-ar.exe qc libnano_Sensors.a  CMakeFiles/nano_Sensors.dir/FunctionLibrary/Drive2Goal.cpp.obj CMakeFiles/nano_Sensors.dir/FunctionLibrary/Maze.cpp.obj CMakeFiles/nano_Sensors.dir/FunctionLibrary/Motor.c.obj CMakeFiles/nano_Sensors.dir/FunctionLibrary/NewPing.cpp.obj CMakeFiles/nano_Sensors.dir/FunctionLibrary/Sensors.c.obj CMakeFiles/nano_Sensors.dir/FunctionLibrary/Thinking.cpp.obj
-C:\PROGRA~2\Arduino\hardware\tools\avr\bin\AVR-RA~1.EXE libnano_Sensors.a

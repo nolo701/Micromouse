@@ -1,3 +1,0 @@
-# Hashes of file build rules.
-9b4768027d9acb5e6bfcb8512aa7e4f2 CMakeFiles/Micromouse-size
-4a11d29ba6b4000b6bda035c26ce4537 Micromouse_micromouse.ino.cpp
