@@ -22,7 +22,7 @@ class Move
     
 
 private:
-
+    bool CENTERED = true;
 
 public:
     Motor R;
@@ -30,6 +30,12 @@ public:
     Move();
     Move(Motor inL, Motor inR);
     // Function Prototypes
+    bool StraightenUltrasonicWise(Sensors onBoard, int desiredSpeed);
+    bool StraightenEncoderWise(Sensors onBoard, int desiredSpeed);
+    void moveStraight4(Sensors onBoard, int desiredSpeed);
+
+
+
     void moveStraight3(Sensors Sensors, int desiredSpeed);
     void moveStraight2(Sensors Sensors, int desiredSpeed);
     void stopMotors();
@@ -42,6 +48,8 @@ public:
     void moveToPosition(Position);
     Motor* refMotorR();
     Motor* refMotorL();
+    void setCentered(bool in);
+    bool getCentered();
 
 };
 

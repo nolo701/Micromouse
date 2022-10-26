@@ -110,7 +110,8 @@ void loop()
     // While it is possible to go straight, continue and try and straighten
     while (SpeedyLuis.onboardSensors.getProxF() == 1)
     {
-        SpeedyLuis.Movement.moveStraight3(SpeedyLuis.onboardSensors, 100);
+        //TestSensors();
+        SpeedyLuis.Movement.moveStraight4(SpeedyLuis.onboardSensors, 100);
         SpeedyLuis.onboardSensors.updateProxF();
     }
     SpeedyLuis.Movement.stopMotors();
