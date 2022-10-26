@@ -30,6 +30,7 @@ public:
     Move();
     Move(Motor inL, Motor inR);
     // Function Prototypes
+    void moveStraight3(Sensors Sensors, int desiredSpeed);
     void moveStraight2(Sensors Sensors, int desiredSpeed);
     void stopMotors();
     void moveForward(int in);

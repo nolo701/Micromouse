@@ -30,7 +30,7 @@ static int DistFPower = A0;
 static int DistRPower = A1;
 
 // Default Velocity Coefficients
-static int DefaultVCOL = 100;
+static int DefaultVCOL = 97;
 static int DefaultVCOR = 100;
 
 // ORIGINAL
@@ -84,6 +84,8 @@ void setup()
     digitalWrite(DistRPower, HIGH);
 
     // Attach the interrupts
+    attachInterrupt(digitalPinToInterrupt(EncodeL), INC_ENCODE_L, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(EncodeR), INC_ENCODE_R, CHANGE);
 
     Serial.begin(115200);
 
@@ -108,22 +110,41 @@ void loop()
     // While it is possible to go straight, continue and try and straighten
     while (SpeedyLuis.onboardSensors.getProxF() == 1)
     {
-        TestSensors();
-        SpeedyLuis.Movement.moveStraight2(SpeedyLuis.onboardSensors, 50);
-        /*
-        Serial.print("Left Motor: ");
-        Serial.println(SpeedyLuis.Movement.L.getVelocityCoefficient());
-        Serial.print("Right Motor: ");
-        Serial.println(SpeedyLuis.Movement.R.getVelocityCoefficient());
-        */
-        // delay(10);
-
-        // read the front prox value
+        SpeedyLuis.Movement.moveStraight3(SpeedyLuis.onboardSensors, 100);
         SpeedyLuis.onboardSensors.updateProxF();
     }
     SpeedyLuis.Movement.stopMotors();
     Serial.println("End: ");
     delay(5000);
+
+    // TestSensors();
+    // SpeedyLuis.Movement.moveStraight2(SpeedyLuis.onboardSensors, 50);
+    /*
+    Serial.print("Left Motor: ");
+    Serial.println(SpeedyLuis.Movement.L.getVelocityCoefficient());
+    Serial.print("Right Motor: ");
+    Serial.println(SpeedyLuis.Movement.R.getVelocityCoefficient());
+    */
+    // delay(10);
+
+    /*
+    SpeedyLuis.Movement.moveForward(100);
+    delay(500);
+    SpeedyLuis.Movement.stopMotors();
+    Serial.print("Encoder Val L: ");
+    Serial.println(SpeedyLuis.Movement.L.getEncoderTicks());
+    Serial.print("Encoder Val R: ");
+    Serial.println(SpeedyLuis.Movement.R.getEncoderTicks());
+    delay(1000);
+    // read the front prox value
+    SpeedyLuis.onboardSensors.updateProxF();
+}
+SpeedyLuis.Movement.stopMotors();
+Serial.println("End: ");
+delay(5000);
+
+*/
+
     // Make a turn if possible
 
     /*
@@ -181,6 +202,16 @@ void loop()
     Serial.println(Right.getVelocityCoefficient());
 
     */
+}
+
+// Encoder interrupt routines
+void INC_ENCODE_L()
+{
+    SpeedyLuis.Movement.L.incrementEncoderTicks();
+}
+void INC_ENCODE_R()
+{
+    SpeedyLuis.Movement.R.incrementEncoderTicks();
 }
 
 // Test Functions

@@ -55,6 +55,11 @@ void Motor::incrementEncoderTicks(int inc)
     this->EncoderTicks = EncoderTicks + inc;
 }
 
+void Motor::incrementEncoderTicks(void)
+{
+    this->EncoderTicks = EncoderTicks + 1;
+}
+
 void Motor::setVelocityCoefficient(int input)
 {
     this->VelocityCoefficient = input;

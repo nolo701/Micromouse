@@ -4,6 +4,46 @@
 #include <math.h>
 #endif
 
+void Move::moveStraight3(Sensors Sensors, int desiredSpeed)
+{
+    int pastR = R.getEncoderTicks();
+    int pastL = L.getEncoderTicks();
+    moveForward(desiredSpeed);
+    delay(100);
+    int deltaL = L.getEncoderTicks() - pastL;
+    int deltaR = R.getEncoderTicks() - pastR;
+
+    int netDelta = deltaL - deltaR;
+    Serial.print("delta L: ");
+    Serial.print(deltaL);
+    Serial.print(" delta R: ");
+    Serial.print(deltaR);
+    Serial.print(" delta L-R: ");
+    Serial.println(netDelta);
+    Serial.println((netDelta*2)/3);
+
+    if (abs(netDelta) > 1) // Enough of a change in sides to modify the current values
+    {
+        if(netDelta>0){
+            L.setVelocityCoefficient(L.getVelocityCoefficient()-(abs(netDelta)*2));
+            
+        }
+        if(netDelta<0){
+            R.setVelocityCoefficient(R.getVelocityCoefficient()-abs(netDelta)*2);
+        }
+    }
+    else{
+        L.setVelocityCoefficient(L.getVelocityCoefficient()+3);
+        if(L.getVelocityCoefficient()>100){
+            L.setVelocityCoefficient(97);
+        }
+        R.setVelocityCoefficient(R.getVelocityCoefficient()+3);
+        if(R.getVelocityCoefficient()>100){
+            R.setVelocityCoefficient(100);
+        }
+    }
+}
+
 void Move::moveStraight2(Sensors Sensors, int desiredSpeed)
 {
 
@@ -26,11 +66,19 @@ void Move::moveStraight2(Sensors Sensors, int desiredSpeed)
         R.setVelocityCoefficient(0);
     }
     */
+
+    float m = 0.05;
+    float Vco = 100 * exp(-m * (delta * delta));
+    Serial.println(Vco);
+
     if (delta > 0) // Go left
     {
-        int Vco = 100 * p / (abs(delta));
+        // int Vco = 100 * p / (abs(delta));
+        float Vco = 100 * exp(-m * (delta * delta));
         if (Vco > 100)
             Vco = 100;
+        if (Vco < 0)
+            Vco = 0;
         // if the left side is further from the wall than the right side with a buffer of 1cm,
         // then increase the the right motor speed and decrease the left motor.
         Serial.println("MOVE LEFT!!!!");
@@ -40,9 +88,12 @@ void Move::moveStraight2(Sensors Sensors, int desiredSpeed)
     }
     else if (delta < 0) // Go right
     {
-        int Vco = 100 * p / (abs(delta));
+        // int Vco = 100 * p / (abs(delta));
+        float Vco = 100 * exp(-m * (delta * delta));
         if (Vco > 100)
             Vco = 100;
+        if (Vco < 0)
+            Vco = 0;
         // if the right side is further from the wall than the left side with a buffer of 1cm,
         // then increase the the right motor speed and decrease the left motor.
         Serial.println("MOVE RIGHT!!!!");

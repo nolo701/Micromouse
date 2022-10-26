@@ -27,6 +27,7 @@ public:
     int getVelocityCoefficient();
     bool getMoving();
     void incrementEncoderTicks(int);
+    void incrementEncoderTicks(void);
     void setVelocityCoefficient(int);
     void setMoving(bool);
 };
