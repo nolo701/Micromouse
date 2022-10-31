@@ -20,7 +20,7 @@ void Move::moveStraight4(Sensors Sensors, int desiredSpeed)
     int distL = Sensors.getDistanceL();
     int deltaDist = distL - distR;
     // If the distance is great enough try to swing over
-    if (abs(deltaDist) >= 2)
+    if (abs(deltaDist) >= 1)
     {
         Serial.print("Ultrasonic: result - ");
         // try to center with a smaller speed
@@ -66,7 +66,7 @@ bool Move::StraightenUltrasonicWise(Sensors Sensors, int desiredSpeedUW)
         //int Vco = 100 * p / (abs(deltaUW));
         //int Vco = 60;
         //float Vco = 100 * exp(-m * (deltaUW * deltaUW));
-        int Vco = L.getVelocityCoefficient() - (2 * abs(deltaUW)); 
+        int Vco = L.getVelocityCoefficient() - (1 * abs(deltaUW)); 
         if (Vco > 100)
             Vco = 100;
         if (Vco < 0)
@@ -83,7 +83,7 @@ bool Move::StraightenUltrasonicWise(Sensors Sensors, int desiredSpeedUW)
         //int Vco = 100 * p / (abs(deltaUW));
         //int Vco = 60;
         //float Vco = 100 * exp(-m * (deltaUW * deltaUW));
-        int Vco = R.getVelocityCoefficient() - (2 * abs(deltaUW)); 
+        int Vco = R.getVelocityCoefficient() - (1 * abs(deltaUW)); 
         if (Vco > 100)
             Vco = 100;
         if (Vco < 0)

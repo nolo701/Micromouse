@@ -104,7 +104,7 @@ void loop()
     // Try to get more accuracy out of NewPing or Ultrasonic Sensors
     digitalWrite(4, !LED);
     LED = !LED;
-    SpeedyLuis.Movement.moveStraight4(SpeedyLuis.onboardSensors, 100);
+    SpeedyLuis.Movement.moveStraight4(SpeedyLuis.onboardSensors, 75);
     //SpeedyLuis.onboardSensors.updateAll();
     /* Main Loop before 10/31/22
     Serial.println("Start: ");
