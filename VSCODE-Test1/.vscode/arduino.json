@@ -3,5 +3,5 @@
     "board": "arduino:avr:nano",
     "programmer": "arduino:avrisp",
     "sketch": "VSCODE-TEST1.ino",
-    "port": "COM6"
+    "port": "COM5"
 }

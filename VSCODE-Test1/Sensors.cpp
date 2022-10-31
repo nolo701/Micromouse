@@ -18,7 +18,7 @@ void Sensors::updateProxF(){
 void Sensors::updateAll()
 {
     L.updateSensor();
-    F.updateSensor();
+    //F.updateSensor();
     R.updateSensor();
     this->ProxF = digitalRead(ProxPinF);
 

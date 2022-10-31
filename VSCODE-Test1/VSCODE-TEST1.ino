@@ -7,6 +7,8 @@
 #include "Sensors.h"
 #include "MM.h"
 
+bool LED = false;
+
 static int MotorRCh1 = 6;
 static int MotorRCh2 = 5;
 static int EncodeR = 2;
@@ -87,16 +89,26 @@ void setup()
     attachInterrupt(digitalPinToInterrupt(EncodeL), INC_ENCODE_L, CHANGE);
     attachInterrupt(digitalPinToInterrupt(EncodeR), INC_ENCODE_R, CHANGE);
 
-    Serial.begin(115200);
+    //Serial.begin(115200);
 
     // Wait for 3s
     delay(3000);
+
+    // Diagnostic LED
+    pinMode(4, OUTPUT);
 }
 
 void loop()
 {
 
+    // Try to get more accuracy out of NewPing or Ultrasonic Sensors
+    digitalWrite(4, !LED);
+    LED = !LED;
+    SpeedyLuis.Movement.moveStraight4(SpeedyLuis.onboardSensors, 100);
+    //SpeedyLuis.onboardSensors.updateAll();
+    /* Main Loop before 10/31/22
     Serial.println("Start: ");
+
     // read the front prox value
     SpeedyLuis.onboardSensors.updateProxF();
     if (SpeedyLuis.onboardSensors.getProxF() == 1)
@@ -110,13 +122,17 @@ void loop()
     // While it is possible to go straight, continue and try and straighten
     while (SpeedyLuis.onboardSensors.getProxF() == 1)
     {
-        //TestSensors();
+        // TestSensors();
+        digitalWrite(4, !LED);
+        LED = !LED;
         SpeedyLuis.Movement.moveStraight4(SpeedyLuis.onboardSensors, 100);
         SpeedyLuis.onboardSensors.updateProxF();
     }
     SpeedyLuis.Movement.stopMotors();
     Serial.println("End: ");
     delay(5000);
+
+    */
 
     // TestSensors();
     // SpeedyLuis.Movement.moveStraight2(SpeedyLuis.onboardSensors, 50);

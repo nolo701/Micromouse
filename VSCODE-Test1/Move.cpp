@@ -20,7 +20,7 @@ void Move::moveStraight4(Sensors Sensors, int desiredSpeed)
     int distL = Sensors.getDistanceL();
     int deltaDist = distL - distR;
     // If the distance is great enough try to swing over
-    if (abs(deltaDist) >= 1)
+    if (abs(deltaDist) >= 2)
     {
         Serial.print("Ultrasonic: result - ");
         // try to center with a smaller speed
@@ -46,7 +46,7 @@ void Move::moveStraight4(Sensors Sensors, int desiredSpeed)
 bool Move::StraightenUltrasonicWise(Sensors Sensors, int desiredSpeedUW)
 {
     // Read the ultrasonic Sensors to see if they need to be adjusted
-    Sensors.updateAll();
+    //Sensors.updateAll();
     int distRUW = Sensors.getDistanceR();
     int distLUW = Sensors.getDistanceL();
     int deltaDist = distLUW - distRUW;
@@ -66,7 +66,7 @@ bool Move::StraightenUltrasonicWise(Sensors Sensors, int desiredSpeedUW)
         //int Vco = 100 * p / (abs(deltaUW));
         //int Vco = 60;
         //float Vco = 100 * exp(-m * (deltaUW * deltaUW));
-        float Vco = L.getVelocityCoefficient() - (1 * abs(deltaUW)); 
+        int Vco = L.getVelocityCoefficient() - (2 * abs(deltaUW)); 
         if (Vco > 100)
             Vco = 100;
         if (Vco < 0)
@@ -83,7 +83,7 @@ bool Move::StraightenUltrasonicWise(Sensors Sensors, int desiredSpeedUW)
         //int Vco = 100 * p / (abs(deltaUW));
         //int Vco = 60;
         //float Vco = 100 * exp(-m * (deltaUW * deltaUW));
-        float Vco = R.getVelocityCoefficient() - (1 * abs(deltaUW)); 
+        int Vco = R.getVelocityCoefficient() - (2 * abs(deltaUW)); 
         if (Vco > 100)
             Vco = 100;
         if (Vco < 0)
@@ -98,8 +98,8 @@ bool Move::StraightenUltrasonicWise(Sensors Sensors, int desiredSpeedUW)
     // Move with the updated values for a small amount of time to see if the
     // distances improved
     moveForward(desiredSpeedUW);
-    //delay(30);
-    Sensors.updateAll();
+    delay(5);
+    //Sensors.updateAll();
     return abs(Sensors.getDistanceL() - Sensors.getDistanceR()) < 2;
 };
 
@@ -110,7 +110,7 @@ bool Move::StraightenEncoderWise(Sensors Sensors, int desiredSpeedEW)
     int pastLEW = L.getEncoderTicks();
     // Move forward with what's given
     moveForward(desiredSpeedEW);
-    delay(60);
+    delay(50);
     int deltaLEW = L.getEncoderTicks() - pastLEW;
     int deltaREW = R.getEncoderTicks() - pastREW;
     // 
@@ -157,7 +157,7 @@ bool Move::StraightenEncoderWise(Sensors Sensors, int desiredSpeedEW)
     pastLEW = L.getEncoderTicks();
     // Move forward with what's given
     moveForward(desiredSpeedEW);
-    delay(60);
+    delay(50);
     deltaLEW = L.getEncoderTicks() - pastLEW;
     deltaREW = R.getEncoderTicks() - pastREW;
     netDelta = deltaLEW - deltaREW;
