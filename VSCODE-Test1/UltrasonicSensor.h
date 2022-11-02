@@ -12,7 +12,7 @@ private:
     int triggerPin;
     int echoPin;
     int powerPin;
-    float distance;
+    int distance;
     NewPing Pingable;
 
 public:
@@ -25,6 +25,8 @@ public:
     void setDistance(float input);
     NewPing getPingable();
     void updateSensor(); // update an ultrasonic
+    bool validateReading(); // use the current distance value and check within 2cm-6cm
+    
 };
 
 #endif

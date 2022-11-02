@@ -32,8 +32,10 @@ static int DistFPower = A0;
 static int DistRPower = A1;
 
 // Default Velocity Coefficients
-static int DefaultVCOL = 97;
+static int DefaultVCOL = 99;
 static int DefaultVCOR = 100;
+
+static bool InterruptFlag = false;
 
 // ORIGINAL
 
@@ -89,7 +91,7 @@ void setup()
     attachInterrupt(digitalPinToInterrupt(EncodeL), INC_ENCODE_L, CHANGE);
     attachInterrupt(digitalPinToInterrupt(EncodeR), INC_ENCODE_R, CHANGE);
 
-    //Serial.begin(115200);
+     Serial.begin(115200);
 
     // Wait for 3s
     delay(3000);
@@ -100,12 +102,25 @@ void setup()
 
 void loop()
 {
-
+    // If the encoders have tripped
+    while (InterruptFlag)
+    {
+        // Check if you can move forward
+        SpeedyLuis.onboardSensors.getUltrasonicF()->updateSensor();
+        //Serial.print("FRONT: ");
+        //Serial.println(SpeedyLuis.onboardSensors.getDistanceF());
+        if ((SpeedyLuis.onboardSensors.getDistanceF() < 25) && (SpeedyLuis.onboardSensors.getDistanceF() > 0) )
+        {
+            SpeedyLuis.Movement.stopMotors();
+            while(1==1){
+                delay(100);
+            }
+        }
+        InterruptFlag = false;
+    }
     // Try to get more accuracy out of NewPing or Ultrasonic Sensors
-    digitalWrite(4, !LED);
-    LED = !LED;
-    SpeedyLuis.Movement.moveStraight4(SpeedyLuis.onboardSensors, 75);
-    //SpeedyLuis.onboardSensors.updateAll();
+    SpeedyLuis.Movement.moveStraight5(SpeedyLuis.onboardSensors, 60);
+    // SpeedyLuis.onboardSensors.updateAll();
     /* Main Loop before 10/31/22
     Serial.println("Start: ");
 
@@ -225,10 +240,25 @@ delay(5000);
 void INC_ENCODE_L()
 {
     SpeedyLuis.Movement.L.incrementEncoderTicks();
+    if ((SpeedyLuis.Movement.L.getEncoderTicks() % 70) == 69)
+    {
+        digitalWrite(4, !LED);
+        LED = !LED;
+        InterruptFlag = true;
+    }
 }
 void INC_ENCODE_R()
 {
     SpeedyLuis.Movement.R.incrementEncoderTicks();
+    /*if ((SpeedyLuis.Movement.R.getEncoderTicks()%15)>0)
+    {
+        InterruptFlag = true;
+    }
+    else
+    {
+        InterruptFlag = false;
+    }
+    */
 }
 
 // Test Functions

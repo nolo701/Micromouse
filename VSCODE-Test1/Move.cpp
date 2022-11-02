@@ -7,6 +7,86 @@
 // A combined method to use encoders and distance sensors to try and remain centered
 // while in a channel of a maze
 
+void Move::moveStraight5(Sensors Sensors, int desiredSpeed)
+{
+    static int lastEncodeVcoR = 100;
+    static int lastEncodeVcoL = 100;
+    Serial.print("Trying to center by: ");
+    static bool succeedUltrasonic = false;
+    static bool succeedEncoder = true;
+    // Read the ultrasonic Sensors to see if they need to be adjusted
+    Sensors.updateAll();
+    int deltaDist = Sensors.getDistanceR() - Sensors.getDistanceL();
+    // The encoders are used to kepe the robot drivng straight at the same velocity, it is up to
+    // the distance sensors to keep it straight.
+    /*
+        There are 3 options when reading the sensors,
+        1) Both sensor readings are valid ~centered -> fine adjustment then use encoders
+            - bias using the larger of two values as it will be more accurate
+        2) One sensor reading is invalid, one is valid -> use the valid to adjust
+            - use the only valid distance
+        3) both are invalid, either in a junction or twisted. Avoid for now!
+
+    */
+    // read the valid values first
+    static bool LDistValid = Sensors.getUltrasonicL()->validateReading();
+    static bool RDistValid = Sensors.getUltrasonicR()->validateReading();
+    static int distanceToRef;
+    static char sideToRef;
+
+    // if both are valid use the larger of the 2 values
+    if (LDistValid && RDistValid)
+    {
+        if (Sensors.getDistanceL() > Sensors.getDistanceR())
+        {
+            distanceToRef = Sensors.getDistanceL();
+            sideToRef = 'L';
+        }
+        else
+        {
+            distanceToRef = Sensors.getDistanceR();
+            sideToRef = 'R';
+        }
+    }
+    // They have different validitiy values
+    else if (LDistValid != RDistValid)
+    {
+        if (RDistValid)
+        {
+            distanceToRef = Sensors.getDistanceR();
+            sideToRef = 'R';
+        }
+        else if (LDistValid)
+        {
+            distanceToRef = Sensors.getDistanceL();
+            sideToRef = 'L';
+        }
+    }
+
+    // Determine whether to straighten or continue straight
+    if (distanceToRef > 3)
+    {
+        Serial.print("Ultrasonic: result - ");
+        // try to center with a smaller speed
+        L.setVelocityCoefficient(lastEncodeVcoL);
+        R.setVelocityCoefficient(lastEncodeVcoR);
+        succeedUltrasonic = StraightenUltrasonicWise2(Sensors, desiredSpeed, distanceToRef, sideToRef);
+        Serial.println((int)succeedUltrasonic);
+    }
+    else
+    {
+        Serial.print("Encoder: result - ");
+        // use the encoders to try and drive straight
+        L.setVelocityCoefficient(lastEncodeVcoL);
+        R.setVelocityCoefficient(lastEncodeVcoR);
+        succeedEncoder = StraightenEncoderWise(Sensors, desiredSpeed);
+        lastEncodeVcoL = L.getVelocityCoefficient();
+        lastEncodeVcoR = R.getVelocityCoefficient();
+        Serial.println((int)succeedUltrasonic);
+    }
+}
+
+// This method works but is not perfect. It will continue straight in a channel ~50% of the time.
 void Move::moveStraight4(Sensors Sensors, int desiredSpeed)
 {
     static int lastEncodeVcoR = 100;
@@ -39,34 +119,33 @@ void Move::moveStraight4(Sensors Sensors, int desiredSpeed)
         lastEncodeVcoL = L.getVelocityCoefficient();
         lastEncodeVcoR = R.getVelocityCoefficient();
         Serial.println((int)succeedUltrasonic);
-
     }
 }
 
-bool Move::StraightenUltrasonicWise(Sensors Sensors, int desiredSpeedUW)
+bool Move::StraightenUltrasonicWise2(Sensors Sensors, int desiredSpeedUW, int distToRef, char sideToRef)
 {
     // Read the ultrasonic Sensors to see if they need to be adjusted
-    //Sensors.updateAll();
+    // Sensors.updateAll();
     int distRUW = Sensors.getDistanceR();
     int distLUW = Sensors.getDistanceL();
     int deltaDist = distLUW - distRUW;
 
-    float p = 2; // 1.75 magic
+    //float p = 2; // 1.75 magic
     // int scaler = (y2-y1)/p
-    int deltaUW = Sensors.getDistanceL() - Sensors.getDistanceR();
-    //Serial.print("delta: ");
-    //Serial.println(deltaUW);
+    //int deltaUW = Sensors.getDistanceL() - Sensors.getDistanceR();
+    // Serial.print("delta: ");
+    // Serial.println(deltaUW);
 
-    const float m = 0.025;
+    //const float m = 0.025;
     // float Vco = 100 * exp(-m * (delta * delta));
     // Serial.println(Vco);
 
-    if (deltaUW > 0) // Go left
+    if (sideToRef == 'L') // Go left
     {
-        //int Vco = 100 * p / (abs(deltaUW));
-        //int Vco = 60;
-        //float Vco = 100 * exp(-m * (deltaUW * deltaUW));
-        int Vco = L.getVelocityCoefficient() - (1 * abs(deltaUW)); 
+        // int Vco = 100 * p / (abs(deltaUW));
+        // int Vco = 60;
+        // float Vco = 100 * exp(-m * (deltaUW * deltaUW));
+        int Vco = L.getVelocityCoefficient() - (1 * distToRef);
         if (Vco > 100)
             Vco = 100;
         if (Vco < 0)
@@ -78,12 +157,12 @@ bool Move::StraightenUltrasonicWise(Sensors Sensors, int desiredSpeedUW)
         L.setVelocityCoefficient(Vco);
         R.setVelocityCoefficient(100);
     }
-    else if (deltaUW < 0) // Go right
+    else if (sideToRef == 'R') // Go right
     {
-        //int Vco = 100 * p / (abs(deltaUW));
-        //int Vco = 60;
-        //float Vco = 100 * exp(-m * (deltaUW * deltaUW));
-        int Vco = R.getVelocityCoefficient() - (1 * abs(deltaUW)); 
+        // int Vco = 100 * p / (abs(deltaUW));
+        // int Vco = 60;
+        // float Vco = 100 * exp(-m * (deltaUW * deltaUW));
+        int Vco = R.getVelocityCoefficient() - (1 * distToRef);
         if (Vco > 100)
             Vco = 100;
         if (Vco < 0)
@@ -99,7 +178,67 @@ bool Move::StraightenUltrasonicWise(Sensors Sensors, int desiredSpeedUW)
     // distances improved
     moveForward(desiredSpeedUW);
     delay(5);
-    //Sensors.updateAll();
+    // Sensors.updateAll();
+    return false;   //abs(Sensors.getDistanceL() - Sensors.getDistanceR()) < 2;
+};
+
+bool Move::StraightenUltrasonicWise(Sensors Sensors, int desiredSpeedUW)
+{
+    // Read the ultrasonic Sensors to see if they need to be adjusted
+    // Sensors.updateAll();
+    int distRUW = Sensors.getDistanceR();
+    int distLUW = Sensors.getDistanceL();
+    int deltaDist = distLUW - distRUW;
+
+    float p = 2; // 1.75 magic
+    // int scaler = (y2-y1)/p
+    int deltaUW = Sensors.getDistanceL() - Sensors.getDistanceR();
+    // Serial.print("delta: ");
+    // Serial.println(deltaUW);
+
+    const float m = 0.025;
+    // float Vco = 100 * exp(-m * (delta * delta));
+    // Serial.println(Vco);
+
+    if (deltaUW > 0) // Go left
+    {
+        // int Vco = 100 * p / (abs(deltaUW));
+        // int Vco = 60;
+        // float Vco = 100 * exp(-m * (deltaUW * deltaUW));
+        int Vco = L.getVelocityCoefficient() - (1 * abs(deltaUW));
+        if (Vco > 100)
+            Vco = 100;
+        if (Vco < 0)
+            Vco = 0;
+        // if the left side is further from the wall than the right side with a buffer of 1cm,
+        // then increase the the right motor speed and decrease the left motor.
+        Serial.println("MOVE LEFT!!!!");
+
+        L.setVelocityCoefficient(Vco);
+        R.setVelocityCoefficient(100);
+    }
+    else if (deltaUW < 0) // Go right
+    {
+        // int Vco = 100 * p / (abs(deltaUW));
+        // int Vco = 60;
+        // float Vco = 100 * exp(-m * (deltaUW * deltaUW));
+        int Vco = R.getVelocityCoefficient() - (1 * abs(deltaUW));
+        if (Vco > 100)
+            Vco = 100;
+        if (Vco < 0)
+            Vco = 0;
+        // if the right side is further from the wall than the left side with a buffer of 1cm,
+        // then increase the the right motor speed and decrease the left motor.
+        Serial.println("MOVE RIGHT!!!!");
+
+        R.setVelocityCoefficient(Vco);
+        L.setVelocityCoefficient(100);
+    }
+    // Move with the updated values for a small amount of time to see if the
+    // distances improved
+    moveForward(desiredSpeedUW);
+    delay(5);
+    // Sensors.updateAll();
     return abs(Sensors.getDistanceL() - Sensors.getDistanceR()) < 2;
 };
 
@@ -113,7 +252,7 @@ bool Move::StraightenEncoderWise(Sensors Sensors, int desiredSpeedEW)
     delay(50);
     int deltaLEW = L.getEncoderTicks() - pastLEW;
     int deltaREW = R.getEncoderTicks() - pastREW;
-    // 
+    //
 
     int netDelta = deltaLEW - deltaREW;
     Serial.print("Before Tick Error: ");
@@ -163,8 +302,7 @@ bool Move::StraightenEncoderWise(Sensors Sensors, int desiredSpeedEW)
     netDelta = deltaLEW - deltaREW;
     Serial.print("After Tick Error: ");
     Serial.println(netDelta);
-    return (abs(deltaLEW-deltaREW)<2);
-
+    return (abs(deltaLEW - deltaREW) < 2);
 }
 
 void Move::moveStraight3(Sensors Sensors, int desiredSpeed)

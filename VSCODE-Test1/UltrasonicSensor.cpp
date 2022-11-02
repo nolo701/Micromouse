@@ -12,12 +12,12 @@ UltrasonicSensor::UltrasonicSensor(int inTrig, int inEcho, int inPow)
     this->triggerPin = inTrig;
     this->echoPin = inEcho;
     this->powerPin = inPow;
-    this->distance = 99;
+    this->distance = 0;
 }
 
 void UltrasonicSensor::updateSensor()
 {
-    float temp = Pingable.ping_cm();
+    int temp = Pingable.ping_cm();
     delay(30);
     if (temp == 0 && digitalRead(echoPin) == HIGH)
     {
@@ -29,6 +29,13 @@ void UltrasonicSensor::updateSensor()
                                       // this false echo, you can get rid of this delay and ping after power HIGH
     }
     distance = temp;
+}
+
+bool UltrasonicSensor::validateReading(){
+    // use the last read sensor distance to see if it falls within the set range
+    // desired values experimentally determined to be between 2cm-6cm.
+    return ((distance>=2)&&(distance<=6));
+
 }
 
 void UltrasonicSensor::setDistance(float in)
