@@ -37,26 +37,6 @@ static int DefaultVCOR = 100;
 
 static bool InterruptFlag = false;
 
-// ORIGINAL
-
-/*
-Motor Left = Motor(MotorLCh1, MotorLCh2, 0, DefaultVCOL, false);
-Motor Right = Motor(MotorRCh1, MotorRCh2, 0, DefaultVCOR, false);
-
-// Create the Move class
-Move MoveSpeedyLuis = Move(Left, Right);
-// Create the NewPings
-UltrasonicSensor UltrasonicLeft = UltrasonicSensor(DistLTrig, DistLEcho, DistLPower);
-UltrasonicSensor UltrasonicForward = UltrasonicSensor(DistFTrig, DistFEcho, DistFPower);
-UltrasonicSensor UltrasonicRight = UltrasonicSensor(DistRTrig, DistREcho, DistRPower);
-// Create the sensors class
-Sensors SensorsSpeedyLuis = Sensors(UltrasonicLeft, UltrasonicForward, UltrasonicRight, FrontProxPin);
-// Create the Mouse
-MM SpeedyLuis = MM(MoveSpeedyLuis, SensorsSpeedyLuis);
-// Test create a position
-// Position Test1 = Position(5,5);
-
-*/
 // Create the Mouse
 MM SpeedyLuis = MM(Move(Motor(MotorLCh1, MotorLCh2, 0, DefaultVCOL, false),
                         Motor(MotorRCh1, MotorRCh2, 0, DefaultVCOR, false)),
@@ -67,22 +47,7 @@ MM SpeedyLuis = MM(Move(Motor(MotorLCh1, MotorLCh2, 0, DefaultVCOL, false),
 
 void setup()
 {
-    pinMode(MotorRCh1, OUTPUT);
-    pinMode(MotorRCh2, OUTPUT);
-    pinMode(EncodeR, INPUT);
-    pinMode(MotorLCh1, OUTPUT);
-    pinMode(MotorLCh2, OUTPUT);
-    pinMode(EncodeL, INPUT);
-    pinMode(DistLEcho, INPUT);
-    pinMode(DistLTrig, OUTPUT);
-    pinMode(DistLPower, OUTPUT);
-    pinMode(DistFEcho, INPUT);
-    pinMode(DistFTrig, OUTPUT);
-    pinMode(DistFPower, OUTPUT);
-    pinMode(DistREcho, INPUT);
-    pinMode(DistRTrig, OUTPUT);
-    pinMode(DistRPower, OUTPUT);
-    // pinMode(13, OUTPUT);
+    PinModes();
     digitalWrite(DistLPower, HIGH);
     digitalWrite(DistFPower, HIGH);
     digitalWrite(DistRPower, HIGH);
@@ -91,13 +56,10 @@ void setup()
     attachInterrupt(digitalPinToInterrupt(EncodeL), INC_ENCODE_L, CHANGE);
     attachInterrupt(digitalPinToInterrupt(EncodeR), INC_ENCODE_R, CHANGE);
 
-     Serial.begin(115200);
+    Serial.begin(115200);
 
     // Wait for 3s
     delay(3000);
-
-    // Diagnostic LED
-    pinMode(4, OUTPUT);
 }
 
 void loop()
@@ -107,12 +69,12 @@ void loop()
     {
         // Check if you can move forward
         SpeedyLuis.onboardSensors.getUltrasonicF()->updateSensor();
-        //Serial.print("FRONT: ");
-        //Serial.println(SpeedyLuis.onboardSensors.getDistanceF());
-        if ((SpeedyLuis.onboardSensors.getDistanceF() < 25) && (SpeedyLuis.onboardSensors.getDistanceF() > 0) )
+        if ((SpeedyLuis.onboardSensors.getDistanceF() < 25) && (SpeedyLuis.onboardSensors.getDistanceF() > 0))
         {
             SpeedyLuis.Movement.stopMotors();
-            while(1==1){
+            // Make a decision on how to move
+            while (1 == 1)
+            {
                 delay(100);
             }
         }
@@ -120,127 +82,13 @@ void loop()
     }
     // Try to get more accuracy out of NewPing or Ultrasonic Sensors
     SpeedyLuis.Movement.moveStraight5(SpeedyLuis.onboardSensors, 60);
-    // SpeedyLuis.onboardSensors.updateAll();
-    /* Main Loop before 10/31/22
-    Serial.println("Start: ");
-
-    // read the front prox value
-    SpeedyLuis.onboardSensors.updateProxF();
-    if (SpeedyLuis.onboardSensors.getProxF() == 1)
-    {
-        Serial.println("We can move forward!");
-    }
-    else if (SpeedyLuis.onboardSensors.getProxF() == 0)
-    {
-        Serial.println("We CAN'T move forward!");
-    }
-    // While it is possible to go straight, continue and try and straighten
-    while (SpeedyLuis.onboardSensors.getProxF() == 1)
-    {
-        // TestSensors();
-        digitalWrite(4, !LED);
-        LED = !LED;
-        SpeedyLuis.Movement.moveStraight4(SpeedyLuis.onboardSensors, 100);
-        SpeedyLuis.onboardSensors.updateProxF();
-    }
-    SpeedyLuis.Movement.stopMotors();
-    Serial.println("End: ");
-    delay(5000);
-
-    */
-
-    // TestSensors();
-    // SpeedyLuis.Movement.moveStraight2(SpeedyLuis.onboardSensors, 50);
-    /*
-    Serial.print("Left Motor: ");
-    Serial.println(SpeedyLuis.Movement.L.getVelocityCoefficient());
-    Serial.print("Right Motor: ");
-    Serial.println(SpeedyLuis.Movement.R.getVelocityCoefficient());
-    */
-    // delay(10);
-
-    /*
-    SpeedyLuis.Movement.moveForward(100);
-    delay(500);
-    SpeedyLuis.Movement.stopMotors();
-    Serial.print("Encoder Val L: ");
-    Serial.println(SpeedyLuis.Movement.L.getEncoderTicks());
-    Serial.print("Encoder Val R: ");
-    Serial.println(SpeedyLuis.Movement.R.getEncoderTicks());
-    delay(1000);
-    // read the front prox value
-    SpeedyLuis.onboardSensors.updateProxF();
-}
-SpeedyLuis.Movement.stopMotors();
-Serial.println("End: ");
-delay(5000);
-
-*/
-
-    // Make a turn if possible
-
-    /*
-
-
-    // Get the current ones
-    Left.setVelocityCoefficient(100);
-    Right.setVelocityCoefficient(100);
-    Serial.println("Before: ");
-    Serial.print("Left Motor: ");
-    Serial.println(Left.getVelocityCoefficient());
-    Serial.print("Right Motor: ");
-    Serial.println(Right.getVelocityCoefficient());
-    delay(1000);
-    Left.setVelocityCoefficient(50);
-    Right.setVelocityCoefficient(50);
-    Serial.println("After: ");
-    Serial.print("Left Motor: ");
-    Serial.println(Left.getVelocityCoefficient());
-    Serial.print("Right Motor: ");
-    Serial.println(Right.getVelocityCoefficient());
-    delay(1000);
-
-    // Try again
-    SpeedyLuis.Movement.refMotorR()->setVelocityCoefficient(100);
-    SpeedyLuis.Movement.refMotorL()->setVelocityCoefficient(100);
-    Serial.println("Before: ");
-    Serial.print("Left Motor: ");
-    Serial.println(SpeedyLuis.Movement.refMotorL()->getVelocityCoefficient());
-    Serial.print("Right Motor: ");
-    Serial.println(SpeedyLuis.Movement.refMotorR()->getVelocityCoefficient());
-
-    // Try again
-    SpeedyLuis.Movement.refMotorR()->setVelocityCoefficient(50);
-    SpeedyLuis.Movement.refMotorL()->setVelocityCoefficient(50);
-    Serial.println("After: ");
-    Serial.print("Left Motor: ");
-    Serial.println(SpeedyLuis.Movement.refMotorL()->getVelocityCoefficient());
-    Serial.print("Right Motor: ");
-    Serial.println(SpeedyLuis.Movement.refMotorR()->getVelocityCoefficient());
-
-    // Try again
-    SpeedyLuis.Movement.refMotorR()->setVelocityCoefficient(100);
-    SpeedyLuis.Movement.refMotorL()->setVelocityCoefficient(100);
-    Serial.println("Before: ");
-    Serial.print("Left Motor: ");
-    Serial.println(SpeedyLuis.Movement.refMotorL()->getVelocityCoefficient());
-    Serial.print("Right Motor: ");
-    Serial.println(SpeedyLuis.Movement.refMotorR()->getVelocityCoefficient());
-
-    Serial.println("After: ");
-    Serial.print("Left Motor: ");
-    Serial.println(Left.getVelocityCoefficient());
-    Serial.print("Right Motor: ");
-    Serial.println(Right.getVelocityCoefficient());
-
-    */
 }
 
 // Encoder interrupt routines
 void INC_ENCODE_L()
 {
     SpeedyLuis.Movement.L.incrementEncoderTicks();
-    if ((SpeedyLuis.Movement.L.getEncoderTicks() % 70) == 69)
+    if ((SpeedyLuis.Movement.L.getEncoderTicks() % 68) == 67)
     {
         digitalWrite(4, !LED);
         LED = !LED;
@@ -250,15 +98,7 @@ void INC_ENCODE_L()
 void INC_ENCODE_R()
 {
     SpeedyLuis.Movement.R.incrementEncoderTicks();
-    /*if ((SpeedyLuis.Movement.R.getEncoderTicks()%15)>0)
-    {
-        InterruptFlag = true;
-    }
-    else
-    {
-        InterruptFlag = false;
-    }
-    */
+
 }
 
 // Test Functions
@@ -281,20 +121,26 @@ void TestSensors()
     Serial.print(" Proximity F: ");
     Serial.println(SpeedyLuis.onboardSensors.getProxF());
 }
-/*
-void TestSensorsFromMouse(){
 
-    // Update the values
-    SpeedyLuis.onboardSensors.updateAll();
-    // Print them out
-    Serial.print(" L: ");
-    Serial.print(SpeedyLuis.onboardSensors.getDistanceL());
-    Serial.print(" F: ");
-    Serial.print(SpeedyLuis.onboardSensors.getDistanceF());
-    Serial.print(" R: ");
-    Serial.print(SpeedyLuis.onboardSensors.getDistanceR());
-    Serial.print(" Proximity F: ");
-    Serial.println(SpeedyLuis.onboardSensors.getProxF());
-
+// This function is just to neaten up the flow when reading top down. It cleans up the setup.
+void PinModes()
+{
+    pinMode(MotorRCh1, OUTPUT);
+    pinMode(MotorRCh2, OUTPUT);
+    pinMode(EncodeR, INPUT);
+    pinMode(MotorLCh1, OUTPUT);
+    pinMode(MotorLCh2, OUTPUT);
+    pinMode(EncodeL, INPUT);
+    pinMode(DistLEcho, INPUT);
+    pinMode(DistLTrig, OUTPUT);
+    pinMode(DistLPower, OUTPUT);
+    pinMode(DistFEcho, INPUT);
+    pinMode(DistFTrig, OUTPUT);
+    pinMode(DistFPower, OUTPUT);
+    pinMode(DistREcho, INPUT);
+    pinMode(DistRTrig, OUTPUT);
+    pinMode(DistRPower, OUTPUT);
+    // Diagnostic LED
+    pinMode(4, OUTPUT);
+    // pinMode(13, OUTPUT);
 }
-*/
