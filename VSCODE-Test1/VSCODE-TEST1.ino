@@ -87,8 +87,8 @@ void loop()
 // Encoder interrupt routines
 void INC_ENCODE_L()
 {
-    SpeedyLuis.Movement.L.incrementEncoderTicks();
-    if ((SpeedyLuis.Movement.L.getEncoderTicks() % 68) == 67)
+    SpeedyLuis.Movement.L.incrementEncoderTicks();//68 magic?
+    if ((SpeedyLuis.Movement.L.getEncoderTicks() % 34) == 33)
     {
         digitalWrite(4, !LED);
         LED = !LED;
