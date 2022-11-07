@@ -373,6 +373,7 @@ void Move::moveStraight3(Sensors Sensors, int desiredSpeed)
     delay(30);
 }
 
+
 void Move::moveStraight2(Sensors Sensors, int desiredSpeed)
 {
 
