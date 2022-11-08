@@ -34,6 +34,8 @@ public:
     bool StraightenEncoderWise(Sensors onBoard, int desiredSpeed);
     void moveStraight4(Sensors onBoard, int desiredSpeed);
 
+    void JunctionTurnL(Sensors onBoard, int desiredSpeed);
+
     // 11/2/22 - Attempt at improving performance by decreasing sensor errors
     void moveStraight5(Sensors onBoard, int desiredSpeed);
     bool StraightenUltrasonicWise2(Sensors onBoard, int desiredSpeed, int distRef, char sideRef);

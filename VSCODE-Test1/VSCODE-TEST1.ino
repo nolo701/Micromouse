@@ -73,7 +73,7 @@ void loop()
         {
             //SpeedyLuis.Movement.stopMotors();
             // Make a decision on how to move
-           JunctionTurnL();
+           SpeedyLuis.Movement.JunctionTurnL(SpeedyLuis.onboardSensors, 60);
         }
         InterruptFlag = false;
     }
