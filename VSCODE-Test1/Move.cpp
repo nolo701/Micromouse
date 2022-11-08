@@ -86,8 +86,6 @@ void Move::moveStraight5(Sensors Sensors, int desiredSpeed)
     }
 }
 
-
-
 bool Move::StraightenEncoderWise(Sensors Sensors, int desiredSpeedEW)
 {
     // Get a starting value
@@ -151,7 +149,15 @@ bool Move::StraightenEncoderWise(Sensors Sensors, int desiredSpeedEW)
     return (abs(deltaLEW - deltaREW) < 2);
 }
 
+<<<<<<< Updated upstream
 Move::Move()
+=======
+<<<<<<< HEAD
+
+== == == =
+>>>>>>> fddf142b01fae08f8727a102d1cb5b41c72cca65
+             Move::Move()
+>>>>>>> Stashed changes
 {
     this->L = Motor();
     this->R = Motor();
@@ -192,7 +198,43 @@ void Move::diffLeft(int speed, int differential)
     R.MoveMotor(R.BACKWARD, speed);
 };
 
+void Move::JunctionTurnL(Sensors input, int desiredSpeed)
+{
+    static short stage = 0;
+    int FrontThresh = 4;
 
+    if (stage == 0) // Prepare for turn
+    {
+        int distL = Sensors.getDistanceL();
+        int distR = Sensors.getDistanceR();
+        int tickThresh = (Sensors.getDistanceL() * (314 / 2) * 377) / 10000;
+        stage = 1;
+    }
+
+    if (stage == 1) // Turning Stage
+    {
+        start = L.getEncode();
+        while (L.getEncode() < (start + tickThresh))
+        {
+            L.MoveMotor(L.FORWARD, desiredSpeed / 7); // width diff 1/7
+            R.MoveMotor(R.FORWARD, desiredSpeed);
+        }
+
+        stage = 0;
+        return;
+    }
+
+    else
+    { // Positioning stage
+        Sensors.F.updateSensor();
+
+        while (Sensors.getDistanceF > FrontThresh)
+        {
+            moveStraight5(input, desiredSpeed / 2)
+        }
+        stage = 2;
+    }
+}
 // This will be the function to take the current orientation and rotate towards a position and start moving
 void Move::moveToPosition(Position destination){
 

@@ -71,12 +71,9 @@ void loop()
         SpeedyLuis.onboardSensors.getUltrasonicF()->updateSensor();
         if ((SpeedyLuis.onboardSensors.getDistanceF() < 25) && (SpeedyLuis.onboardSensors.getDistanceF() > 0))
         {
-            SpeedyLuis.Movement.stopMotors();
+            //SpeedyLuis.Movement.stopMotors();
             // Make a decision on how to move
-            while (1 == 1)
-            {
-                delay(100);
-            }
+           JunctionTurnL();
         }
         InterruptFlag = false;
     }
