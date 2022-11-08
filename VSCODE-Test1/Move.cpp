@@ -1,5 +1,6 @@
 
 #include "Move.h"
+
 #ifndef MATH_H
 #include <math.h>
 #endif
@@ -7,7 +8,7 @@
 // A combined method to use encoders and distance sensors to try and remain centered
 // while in a channel of a maze
 
-void Move::moveStraight5(Sensors Sensors, int desiredSpeed)
+void Move::moveStraight(Sensors Sensors, int desiredSpeed)
 {
     static int lastEncodeVcoR = 100;
     static int lastEncodeVcoL = 100;
@@ -64,13 +65,13 @@ void Move::moveStraight5(Sensors Sensors, int desiredSpeed)
     }
 
     // Determine whether to straighten or continue straight
-    if (distanceToRef > 3)
+    if (distanceToRef >= 2)
     {
         Serial.print("Ultrasonic: result - ");
         // try to center with a smaller speed
         L.setVelocityCoefficient(lastEncodeVcoL);
         R.setVelocityCoefficient(lastEncodeVcoR);
-        succeedUltrasonic = StraightenUltrasonicWise2(Sensors, desiredSpeed, distanceToRef, sideToRef);
+        succeedUltrasonic = StraightenUltrasonicWise(Sensors, desiredSpeed, distanceToRef, sideToRef);
         Serial.println((int)succeedUltrasonic);
     }
     else
@@ -85,6 +86,57 @@ void Move::moveStraight5(Sensors Sensors, int desiredSpeed)
         Serial.println((int)succeedUltrasonic);
     }
 }
+
+bool Move::StraightenUltrasonicWise(Sensors Sensors, int desiredSpeedUW, int distToRef, char sideToRef)
+{
+    // Read the ultrasonic Sensors to see if they need to be adjusted
+
+    int distRUW = Sensors.getDistanceR();
+    int distLUW = Sensors.getDistanceL();
+    int deltaDist = distLUW - distRUW;
+
+    
+
+    if (sideToRef == 'L') // Go left
+    {
+        // int Vco = 100 * p / (abs(deltaUW));
+        // int Vco = 60;
+        // float Vco = 100 * exp(-m * (deltaUW * deltaUW));
+        int Vco = L.getVelocityCoefficient() - (3 * distToRef)/2;
+        if (Vco > 100)
+            Vco = 100;
+        if (Vco < 0)
+            Vco = 0;
+        // if the left side is further from the wall than the right side with a buffer of 1cm,
+        // then increase the the right motor speed and decrease the left motor.
+        Serial.println("MOVE LEFT!!!!");
+
+        L.setVelocityCoefficient(Vco);
+        R.setVelocityCoefficient(100);
+    }
+    else if (sideToRef == 'R') // Go right
+    {
+       
+        int Vco = R.getVelocityCoefficient() - (3 * distToRef)/2;
+        if (Vco > 100)
+            Vco = 100;
+        if (Vco < 0)
+            Vco = 0;
+        // if the right side is further from the wall than the left side with a buffer of 1cm,
+        // then increase the the right motor speed and decrease the left motor.
+        Serial.println("MOVE RIGHT!!!!");
+
+        R.setVelocityCoefficient(Vco);
+        L.setVelocityCoefficient(100);
+    }
+    // Move with the updated values for a small amount of time to see if the
+    // distances improved
+    moveForward(desiredSpeedUW);
+    //delay(5);
+    
+    return false;   //abs(Sensors.getDistanceL() - Sensors.getDistanceR()) < 2;
+};
+
 
 bool Move::StraightenEncoderWise(Sensors Sensors, int desiredSpeedEW)
 {
@@ -149,6 +201,39 @@ bool Move::StraightenEncoderWise(Sensors Sensors, int desiredSpeedEW)
     return (abs(deltaLEW - deltaREW) < 2);
 }
 
+void Move::JunctionTurnL(Sensors input, int desiredSpeed)
+{
+    static short stage = 0;
+    int FrontThresh = 15;
+    int tickThresh = (input.getDistanceL() * (314 / 2) * 377) / 10000;
+
+
+    if (stage == 1) // Turning Stage
+    {
+        int start = L.getEncoderTicks();
+        while (L.getEncoderTicks() < (start + tickThresh))
+        {
+            L.MoveMotor(L.FORWARD, desiredSpeed / 7); // width diff 1/7
+            R.MoveMotor(R.FORWARD, desiredSpeed);
+        }
+
+        stage = 0;
+        return;
+    }
+
+    else
+    { // Positioning stage
+        while (input.getDistanceF() > FrontThresh)
+        {
+            moveStraight(input, desiredSpeed / 2);
+            input.getUltrasonicF()->updateSensor();
+        }
+       
+        stopMotors();
+        stage = 1;
+    }
+}
+
 Move::Move()
 {
     this->L = Motor();
@@ -191,36 +276,7 @@ void Move::diffLeft(int speed, int differential)
     R.MoveMotor(R.BACKWARD, speed);
 };
 
-void Move::JunctionTurnL(Sensors input, int desiredSpeed)
-{
-    static short stage = 0;
-    int FrontThresh = 4;
-    int tickThresh = (input.getDistanceL() * (314 / 2) * 377) / 10000;
 
-    if (stage == 1) // Turning Stage
-    {
-        int start = L.getEncoderTicks();
-        while (L.getEncoderTicks() < (start + tickThresh))
-        {
-            L.MoveMotor(L.FORWARD, desiredSpeed / 7); // width diff 1/7
-            R.MoveMotor(R.FORWARD, desiredSpeed);
-        }
-
-        stage = 0;
-        return;
-    }
-
-    else
-    { // Positioning stage
-        input.getUltrasonicF()->updateSensor();
-        while (input.getDistanceF() > FrontThresh)
-        {
-            moveStraight5(input, desiredSpeed / 2);
-        }
-        stopMotors();
-        stage = 1;
-    }
-}
 // This will be the function to take the current orientation and rotate towards a position and start moving
 void Move::moveToPosition(Position destination){
 

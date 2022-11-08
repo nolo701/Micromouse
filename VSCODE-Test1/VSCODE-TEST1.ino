@@ -69,22 +69,22 @@ void loop()
     {
         // Check if you can move forward
         SpeedyLuis.onboardSensors.getUltrasonicF()->updateSensor();
-        if ((SpeedyLuis.onboardSensors.getDistanceF() < 25) && (SpeedyLuis.onboardSensors.getDistanceF() > 0))
+        if ((SpeedyLuis.onboardSensors.getDistanceF() < 30) && (SpeedyLuis.onboardSensors.getDistanceF() > 0))
         {
             //SpeedyLuis.Movement.stopMotors();
             // Make a decision on how to move
-           SpeedyLuis.Movement.JunctionTurnL(SpeedyLuis.onboardSensors, 60);
+           SpeedyLuis.Movement.JunctionTurnL(SpeedyLuis.onboardSensors, 70);
         }
         InterruptFlag = false;
     }
     // Try to get more accuracy out of NewPing or Ultrasonic Sensors
-    SpeedyLuis.Movement.moveStraight5(SpeedyLuis.onboardSensors, 60);
+    SpeedyLuis.Movement.moveStraight(SpeedyLuis.onboardSensors, 70);
 }
 
 // Encoder interrupt routines
 void INC_ENCODE_L()
 {
-    SpeedyLuis.Movement.L.incrementEncoderTicks();//68 magic?
+    SpeedyLuis.Movement.L.incrementEncoderTicks();//68 magic? / 34
     if ((SpeedyLuis.Movement.L.getEncoderTicks() % 34) == 33)
     {
         digitalWrite(4, !LED);
